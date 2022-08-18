@@ -8,7 +8,7 @@ import (
 type distro struct {
 	Name           string `json:"name"`
 	ReleaseCycle   string `json:"releaseCycle"`
-	LatestVersion  string `json:"latest"`
+	LatestVersion  string `json:"latestVersion"`
 	LatestKernel   string `json:"latestKernel"`
 	PackageManager string `json:"packageManager"`
 	IsImmutable    bool   `json:"isImmutable"`
@@ -53,9 +53,19 @@ func getDistros(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, distros)
 }
 
+func postDistro(c *gin.Context) {
+	var d distro
+	if err := c.BindJSON(&d); err != nil {
+		return
+	}
+	distros = append(distros, d)
+	c.IndentedJSON(http.StatusCreated, d)
+}
+
 func main() {
 	router := gin.Default()
 	router.SetTrustedProxies([]string{"127.0.0.1", "localhost"})
 	router.GET("/v1/distros", getDistros)
-	router.Run("localhost:8080")
+	router.POST("/v1/distros", postDistro)
+	router.Run(":8080")
 }
