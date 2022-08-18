@@ -56,16 +56,6 @@ func getDistros(c *gin.Context) {
 func main() {
 	router := gin.Default()
 	router.SetTrustedProxies([]string{"127.0.0.1", "localhost"})
-	router.GET("/distros", getDistros)
-	router.GET("/tab", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "nine",
-		})
-	})
-	getUser := func(c *gin.Context) {
-		name := c.Param("name")
-		c.String(http.StatusOK, "Hello %s", name)
-	}
-	router.GET("/user/:name", getUser)
+	router.GET("/v1/distros", getDistros)
 	router.Run("localhost:8080")
 }
