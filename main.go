@@ -6,6 +6,7 @@ import (
 )
 
 type distro struct {
+	ID             string `json:"id"`
 	Name           string `json:"name"`
 	ReleaseCycle   string `json:"releaseCycle"`
 	LatestVersion  string `json:"latestVersion"`
@@ -18,6 +19,7 @@ type distro struct {
 
 var distros = []distro{
 	{
+		ID:             "1",
 		Name:           "ArchLinux",
 		ReleaseCycle:   "Rolling",
 		LatestVersion:  "N/A",
@@ -28,6 +30,7 @@ var distros = []distro{
 		Compiler:       "gcc",
 	},
 	{
+		ID:             "2",
 		Name:           "Debian",
 		ReleaseCycle:   "Standard",
 		LatestVersion:  "11 (Bullseye)",
@@ -38,6 +41,7 @@ var distros = []distro{
 		Compiler:       "gcc",
 	},
 	{
+		ID:             "3",
 		Name:           "Fedora Silverblue",
 		ReleaseCycle:   "Standard",
 		LatestVersion:  "36",
@@ -51,6 +55,17 @@ var distros = []distro{
 
 func getDistros(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, distros)
+}
+
+func getDistroByID(c *gin.Context) {
+	id := c.Param("id")
+	for _, r := range distros {
+		if r.ID == id {
+			c.IndentedJSON(http.StatusOK, r)
+			return
+		}
+	}
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "distro not found"})
 }
 
 func postDistro(c *gin.Context) {
@@ -67,5 +82,6 @@ func main() {
 	router.SetTrustedProxies([]string{"127.0.0.1", "localhost"})
 	router.GET("/v1/distros", getDistros)
 	router.POST("/v1/distros", postDistro)
+	router.GET("/v1/distros/:id", getDistroByID)
 	router.Run(":8080")
 }
